@@ -1,14 +1,8 @@
 {{ if eq .chezmoi.os "darwin" -}}
-# Colima (macOS only)
-Include ~/.colima/ssh_config
-
 # OrbStack (macOS only)
 Include ~/.orbstack/ssh/config
 
 {{ end -}}
-{{ if eq .chezmoi.os "darwin" -}}
-# DevPod — update the workdir/context as needed per machine
-# DevPod Start devpod.devpod
 Host devpod.devpod
   ForwardAgent yes
   LogLevel error
@@ -17,9 +11,7 @@ Host devpod.devpod
   HostKeyAlgorithms rsa-sha2-256,rsa-sha2-512,ssh-rsa
   ProxyCommand "/Applications/DevPod.app/Contents/MacOS/devpod-cli" ssh --stdio --context default --user root devpod --workdir "/workspaces/content"
   User root
-# DevPod End devpod.devpod
 
-{{ end -}}
 Host *
   AddKeysToAgent yes
 {{- if eq .chezmoi.os "darwin" }}
