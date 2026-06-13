@@ -1,5 +1,17 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
+# Ubuntu 26 terminal palette — hex values so colours are identical on every
+# machine regardless of the terminal app's own ANSI colour table.
+#
+# Terminal background (set in your terminal app): #300A24
+#
+# #8AE234  bright green  — user@host, success prompt
+# #729FCF  bright blue   — directory
+# #34E2E2  bright cyan   — git branch / status
+# #FCE94F  bright yellow — git state, command duration
+# #EF2929  bright red    — error prompt
+# #AD7FA8  bright magenta — python venv
+
 format = """
 $username\
 $hostname\
@@ -12,39 +24,47 @@ $line_break\
 $python\
 $character"""
 
+[username]
+style_user  = "bold #8AE234"
+style_root  = "bold #EF2929"
+format      = "[$user]($style)"
+show_always = true
+
+[hostname]
+ssh_only = false
+format   = "[@$hostname]($style):"
+style    = "bold #8AE234"
+trim_at  = "."
+
 [directory]
-style = "blue"
+style             = "bold #729FCF"
+truncation_length = 3
+truncate_to_repo  = true
 
 [character]
-success_symbol = "[❯](purple)"
-error_symbol = "[❯](red)"
-vimcmd_symbol = "[❮](green)"
+success_symbol = "[❯](#8AE234)"
+error_symbol   = "[❯](#EF2929)"
+vimcmd_symbol  = "[❮](#FCE94F)"
 
 [git_branch]
-format = "[$branch]($style)"
-style = "bright-black"
+format = " [$branch]($style)"
+style  = "#34E2E2"
 
 [git_status]
-format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
-style = "cyan"
-conflicted = "​"
-untracked = "​"
-modified = "​"
-staged = "​"
-renamed = "​"
-deleted = "​"
+format  = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](bold #FCE94F) ($ahead_behind$stashed)]($style)"
+style   = "#34E2E2"
 stashed = "≡"
 
 [git_state]
 format = '\([$state( $progress_current/$progress_total)]($style)\) '
-style = "bright-black"
+style  = "#FCE94F"
 
 [cmd_duration]
 format = "[$duration]($style) "
-style = "yellow"
+style  = "#FCE94F"
 
 [python]
-format = "[$virtualenv]($style) "
-style = "bright-black"
+format            = "[$virtualenv]($style) "
+style             = "#AD7FA8"
 detect_extensions = []
-detect_files = []
+detect_files      = []
