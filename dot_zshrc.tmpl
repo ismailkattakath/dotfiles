@@ -1,45 +1,52 @@
-# ~/.zshrc — interactive shell configuration
+# =============================================================================
+# Universal zsh configuration
+# Platform-specific additions live at the bottom, clearly separated.
+# Machine-local overrides go in ~/.zshrc.local (never committed).
+# =============================================================================
 
 # --- History ---
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000
 SAVEHIST=50000
-setopt HIST_IGNORE_DUPS       # skip adjacent duplicate entries
-setopt HIST_IGNORE_ALL_DUPS   # remove older duplicate on new entry
-setopt HIST_IGNORE_SPACE      # don't record commands prefixed with a space
-setopt HIST_REDUCE_BLANKS     # strip superfluous blanks
-setopt HIST_VERIFY            # expand history before executing
-setopt SHARE_HISTORY          # share history across all open sessions
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_REDUCE_BLANKS
+setopt HIST_VERIFY
+setopt SHARE_HISTORY
 
-# --- Shell options ---
-setopt AUTO_CD                # type a dir name to cd into it
-setopt CORRECT                # suggest corrections for mistyped commands
-setopt NO_CASE_GLOB           # case-insensitive globbing
-setopt GLOB_DOTS              # include dotfiles in glob patterns
+# --- Shell behaviour ---
+setopt AUTO_CD
+setopt CORRECT
+setopt NO_CASE_GLOB
+setopt GLOB_DOTS
 
 # --- Completion ---
 fpath+=~/.zfunc
 autoload -Uz compinit && compinit
 zstyle ':completion:*' menu select
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'  # case-insensitive completion
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
-# --- Tools ---
-eval "$(pyenv init -)"
-eval "$(direnv hook zsh)"
-eval "$(starship init zsh)"
-
+# --- PATH ---
 export PATH="$HOME/.local/bin:$PATH"
 
-{{ if eq .chezmoi.os "darwin" -}}
-# --- macOS ---
-export CONTAINERS_MACHINE_PROVIDER=applehv
-{{ end -}}
+# --- Core tools (guarded — shell stays functional if a tool isn't installed) ---
+command -v pyenv   >/dev/null && eval "$(pyenv init -)"
+command -v direnv  >/dev/null && eval "$(direnv hook zsh)"
+command -v starship >/dev/null && eval "$(starship init zsh)"
 
 # --- Aliases ---
 alias ai="claude --permission-mode bypassPermissions"
-{{ if eq .chezmoi.os "darwin" -}}
-alias devclean='podman ps -q | xargs -r podman stop; podman system prune -af --volumes'
-{{ end -}}
 
-# --- Machine-local overrides (not committed) ---
+# =============================================================================
+# macOS
+# =============================================================================
+{{ if eq .chezmoi.os "darwin" -}}
+export CONTAINERS_MACHINE_PROVIDER=applehv
+alias devclean='podman ps -q | xargs -r podman stop; podman system prune -af --volumes'
+{{- end }}
+
+# =============================================================================
+# Machine-local overrides — not committed, for per-machine aliases/paths/env
+# =============================================================================
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

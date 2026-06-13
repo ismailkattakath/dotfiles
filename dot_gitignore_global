@@ -1,3 +1,12 @@
-*~
+# macOS
 .DS_Store
+
+# Editors
+*~
+*.swp
+*.swo
+
+# Secrets / local config
+.env
+.env.local
 **/.claude/settings.local.json

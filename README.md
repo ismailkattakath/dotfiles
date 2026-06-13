@@ -2,71 +2,62 @@
 
 Personal dotfiles managed with [chezmoi](https://chezmoi.io).
 
+**Design principle:** Linux is the baseline. Every file works on Ubuntu,
+containers, and Raspberry Pi as-is. macOS-specific config is clearly
+marked and additive.
+
 ## Supported platforms
 
-- macOS (primary)
-- Ubuntu / Debian Linux (VMs, containers, Codespaces)
-- Raspberry Pi (ARM Linux)
+| Platform | Status |
+|----------|--------|
+| Ubuntu / Debian | Primary baseline |
+| Raspberry Pi (ARM) | Supported |
+| macOS | Additive layer |
+| Devcontainers / Codespaces | Supported |
 
-## Bootstrap a new machine
+## Bootstrap
 
+**Any machine:**
 ```sh
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply ismail-kattakath
 ```
 
-This will:
-1. Install chezmoi
-2. Clone this repo
-3. Prompt for personalization data (name, email, GPG key)
-4. Apply all dotfiles
-5. Run install scripts (Homebrew packages on macOS, apt packages on Linux)
+This installs chezmoi, clones this repo, prompts once for your name/email/GPG key,
+applies all dotfiles, and runs the platform-appropriate install script.
 
-## Secrets
+## What's tracked
 
-Secrets are **never committed**. On each machine, create `~/.secrets` (chmod 600):
-
-```sh
-touch ~/.secrets && chmod 600 ~/.secrets
-```
-
-Then add your tokens:
-
-```sh
-# ~/.secrets
-export ANTHROPIC_API_KEY="..."
-export OPENAI_API_KEY="..."
-# etc.
-```
-
-## Daily usage
-
-| Command | What it does |
-|---------|-------------|
-| `chezmoi add ~/.zshrc` | Start tracking a new dotfile |
-| `chezmoi edit ~/.zshrc` | Edit a tracked file in source dir |
-| `chezmoi apply` | Apply source changes to home directory |
-| `chezmoi diff` | Preview what would change |
-| `chezmoi update` | Pull latest from git and apply |
-| `chezmoi cd` | Jump into the source directory |
-| `chezmoi git -- push` | Push changes to GitHub |
+| File | Purpose |
+|------|---------|
+| `~/.zshrc` | Shell config — history, completion, tools, aliases |
+| `~/.zprofile` | Login shell — PATH, secrets, Homebrew (macOS) |
+| `~/.gitconfig` | Git — sensible defaults, aliases, work context override |
+| `~/.gitignore_global` | Ignored everywhere: `.DS_Store`, `*.swp`, `.env` |
+| `~/.editorconfig` | Consistent indent/charset across all editors |
+| `~/.stCommitMsg` | Commit message template |
+| `~/.config/starship.toml` | Prompt |
+| `~/.config/gh/config.yml` | GitHub CLI preferences and aliases |
+| `~/.ssh/config` | Key-based auth defaults |
+| `~/Brewfile` | macOS packages (ignored on Linux) |
 
 ## Machine-local overrides
 
-For machine-specific config that shouldn't be committed, use:
+These files are **never committed** — create them on each machine as needed:
 
-- `~/.zshrc.local` — sourced at end of `.zshrc`
-- `~/.secrets` — environment variables and tokens
+| File | Purpose |
+|------|---------|
+| `~/.zshrc.local` | Machine-specific aliases, paths, env vars |
+| `~/.ssh/config.local` | Machine-specific SSH hosts (DevPod, jump hosts, VMs) |
+| `~/.secrets` | Tokens and credentials (`chmod 600`) |
 
-## Devcontainers / Codespaces
+## Daily workflow
 
-Set the `DOTFILES_REPO` to `ismail-kattakath/dotfiles` in your devcontainer settings, or add to `devcontainer.json`:
-
-```json
-{
-  "features": {
-    "ghcr.io/devcontainers/features/dotfiles:1": {
-      "repository": "ismail-kattakath/dotfiles"
-    }
-  }
-}
+```sh
+chezmoi edit ~/.zshrc       # edit in source dir, applies on save
+chezmoi add ~/.newfile      # start tracking a new dotfile
+chezmoi diff                # preview before applying
+chezmoi apply               # apply source → home
+chezmoi update              # pull from git + apply
+chezmoi cd                  # jump into source dir
+chezmoi git -- push         # push changes to GitHub
 ```

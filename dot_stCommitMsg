@@ -8,4 +8,3 @@
 # Type:  feat | fix | refactor | docs | style | test | chore
 # Scope: optional area of change, e.g. (auth), (api), (ci)
 # Wrap body lines at 72 characters.
-# Leave a blank line between the summary and the body.

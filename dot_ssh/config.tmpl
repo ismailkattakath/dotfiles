@@ -1,15 +1,9 @@
-Host devpod.devpod
-  ForwardAgent yes
-  LogLevel error
-  StrictHostKeyChecking no
-  UserKnownHostsFile /dev/null
-  HostKeyAlgorithms rsa-sha2-256,rsa-sha2-512,ssh-rsa
-  ProxyCommand "/Applications/DevPod.app/Contents/MacOS/devpod-cli" ssh --stdio --context default --user root devpod --workdir "/workspaces/content"
-  User root
+# Machine-local SSH hosts (DevPod, jump hosts, tunnels, VM managers) — not committed
+Include ~/.ssh/config.local
 
 Host *
-  AddKeysToAgent yes
+    AddKeysToAgent yes
 {{- if eq .chezmoi.os "darwin" }}
-  UseKeychain yes
+    UseKeychain yes
 {{- end }}
-  IdentityFile ~/.ssh/id_ed25519
+    IdentityFile ~/.ssh/id_ed25519

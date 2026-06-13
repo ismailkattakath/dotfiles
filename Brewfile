@@ -1,35 +1,34 @@
-# macOS packages — managed via chezmoi + Homebrew Bundle
-# Run: brew bundle --global  (or the run_once bootstrap script handles this)
+# macOS packages — applied only on Darwin via .chezmoiignore
+# Run manually: brew bundle --global
 
 tap "homebrew/bundle"
 
-# CLI essentials
+# -- Dev tools (universal counterparts installed via run_once on Linux) --
 brew "chezmoi"
-brew "gh"
 brew "git"
 brew "git-lfs"
-brew "direnv"
+brew "gh"
 brew "starship"
+brew "direnv"
 brew "pyenv"
 brew "node"
 brew "uv"
 
-# Shell utilities
-brew "bat"
-brew "eza"
-brew "fd"
-brew "ripgrep"
-brew "fzf"
-brew "zoxide"
-brew "btop"
+# -- Shell utilities --
+brew "bat"       # better cat
+brew "eza"       # better ls
+brew "fd"        # better find
+brew "ripgrep"   # better grep
+brew "fzf"       # fuzzy finder
+brew "zoxide"    # smarter cd
+brew "btop"      # resource monitor
 
-# Apps
+# -- Apps --
 cask "claude"
 cask "cursor"
 cask "devpod"
 cask "maccy"
 cask "brave-browser"
-cask "iina"
 cask "telegram"
 cask "font-fira-code-nerd-font"
 cask "font-jetbrains-mono-nerd-font"
