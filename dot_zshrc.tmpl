@@ -1,0 +1,39 @@
+# ~/.zshrc — interactive shell configuration
+
+{{ if eq .chezmoi.os "darwin" -}}
+export CONTAINERS_MACHINE_PROVIDER=applehv
+{{ end -}}
+
+# pyenv shell integration
+eval "$(pyenv init -)"
+
+# direnv hook
+eval "$(direnv hook zsh)"
+
+# Starship prompt
+eval "$(starship init zsh)"
+
+export PATH="$HOME/.local/bin:$PATH"
+
+# zsh completion
+fpath+=~/.zfunc; autoload -Uz compinit; compinit
+zstyle ':completion:*' menu select
+
+{{ if eq .chezmoi.os "darwin" -}}
+# macOS-specific paths
+export PATH="/Users/USER/.antigravity/antigravity/bin:$PATH"
+export PATH="/Users/USER/.antigravity-ide/antigravity-ide/bin:$PATH"
+export PATH="$PATH:/Users/USER/.lmstudio/bin"
+
+# iTerm2 shell integration
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+{{ end -}}
+# Aliases
+alias ai="claude --permission-mode bypassPermissions"
+{{ if eq .chezmoi.os "darwin" -}}
+alias devclean='podman ps -q | xargs -r podman stop; podman system prune -af --volumes'
+{{ end -}}
+
+# Load machine-local overrides (not tracked, for machine-specific aliases/env)
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

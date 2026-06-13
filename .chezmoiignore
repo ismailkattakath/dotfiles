@@ -1,0 +1,4 @@
+# Files that exist in the source but should not be applied on certain platforms
+{{ if ne .chezmoi.os "darwin" }}
+Brewfile
+{{ end }}

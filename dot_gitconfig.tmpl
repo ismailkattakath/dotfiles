@@ -1,0 +1,50 @@
+[user]
+	name = {{ .name }}
+	email = {{ .personalEmail }}
+{{- if .signingKey }}
+	signingkey = {{ .signingKey }}
+{{- end }}
+
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+
+[core]
+	excludesfile = ~/.gitignore_global
+
+[commit]
+	template = ~/.stCommitMsg
+{{- if .signingKey }}
+	gpgsign = true
+{{- end }}
+
+{{- if .signingKey }}
+[gpg]
+	program = gpg
+{{- end }}
+
+[init]
+	defaultBranch = main
+
+[pull]
+	rebase = false
+
+[credential "https://github.com"]
+	helper =
+	helper = !/opt/homebrew/bin/gh auth git-credential
+
+[credential "https://gist.github.com"]
+	helper =
+	helper = !/opt/homebrew/bin/gh auth git-credential
+
+[difftool "sourcetree"]
+	cmd = opendiff "$LOCAL" "$REMOTE"
+
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh "$LOCAL" "$REMOTE" -ancestor "$BASE" -merge "$MERGED"
+	trustExitCode = true
+
+[includeIf "gitdir:~/infin8it/"]
+	path = ~/.gitconfig-infin8it

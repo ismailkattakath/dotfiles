@@ -1,0 +1,19 @@
+# ~/.zprofile — login shell: PATH, env vars, secrets
+
+# pyenv — PATH only; shell integration is in ~/.zshrc
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+
+{{ if eq .chezmoi.os "darwin" -}}
+# Homebrew
+eval "$(/opt/homebrew/bin/brew shellenv zsh)"
+{{ else if eq .chezmoi.os "linux" -}}
+# Homebrew on Linux (if installed)
+[[ -f /home/linuxbrew/.linuxbrew/bin/brew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
+{{ end -}}
+
+# Load secrets from ~/.secrets (chmod 600, never committed)
+[[ -f ~/.secrets ]] && set -a && source ~/.secrets && set +a
+
+# HuggingFace token — mirrors huggingface-cli auth state automatically
+[[ -f ~/.cache/huggingface/token ]] && export HUGGINGFACE_TOKEN=$(<~/.cache/huggingface/token) && export HF_TOKEN="$HUGGINGFACE_TOKEN"
