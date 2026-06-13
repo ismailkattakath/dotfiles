@@ -1,39 +1,49 @@
 # ~/.zshrc — interactive shell configuration
 
-{{ if eq .chezmoi.os "darwin" -}}
-export CONTAINERS_MACHINE_PROVIDER=applehv
-{{ end -}}
+# --- History ---
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=50000
+setopt HIST_IGNORE_DUPS       # skip adjacent duplicate entries
+setopt HIST_IGNORE_ALL_DUPS   # remove older duplicate on new entry
+setopt HIST_IGNORE_SPACE      # don't record commands prefixed with a space
+setopt HIST_REDUCE_BLANKS     # strip superfluous blanks
+setopt HIST_VERIFY            # expand history before executing
+setopt SHARE_HISTORY          # share history across all open sessions
 
-# pyenv shell integration
+# --- Shell options ---
+setopt AUTO_CD                # type a dir name to cd into it
+setopt CORRECT                # suggest corrections for mistyped commands
+setopt NO_CASE_GLOB           # case-insensitive globbing
+setopt GLOB_DOTS              # include dotfiles in glob patterns
+
+# --- Completion ---
+fpath+=~/.zfunc
+autoload -Uz compinit && compinit
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'  # case-insensitive completion
+
+# --- Tools ---
 eval "$(pyenv init -)"
-
-# direnv hook
 eval "$(direnv hook zsh)"
-
-# Starship prompt
 eval "$(starship init zsh)"
 
 export PATH="$HOME/.local/bin:$PATH"
 
-# zsh completion
-fpath+=~/.zfunc; autoload -Uz compinit; compinit
-zstyle ':completion:*' menu select
-
 {{ if eq .chezmoi.os "darwin" -}}
-# macOS-specific paths
-export PATH="/Users/USER/.antigravity/antigravity/bin:$PATH"
-export PATH="/Users/USER/.antigravity-ide/antigravity-ide/bin:$PATH"
-export PATH="$PATH:/Users/USER/.lmstudio/bin"
-
-# iTerm2 shell integration
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
+# --- macOS ---
+export CONTAINERS_MACHINE_PROVIDER=applehv
+export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+export PATH="$HOME/.antigravity-ide/antigravity-ide/bin:$PATH"
+export PATH="$PATH:$HOME/.lmstudio/bin"
+test -e "$HOME/.iterm2_shell_integration.zsh" && source "$HOME/.iterm2_shell_integration.zsh"
 {{ end -}}
-# Aliases
+
+# --- Aliases ---
 alias ai="claude --permission-mode bypassPermissions"
 {{ if eq .chezmoi.os "darwin" -}}
 alias devclean='podman ps -q | xargs -r podman stop; podman system prune -af --volumes'
 {{ end -}}
 
-# Load machine-local overrides (not tracked, for machine-specific aliases/env)
+# --- Machine-local overrides (not committed) ---
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
