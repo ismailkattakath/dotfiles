@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "enableAllProjectMcpServers": true,
+  "permissions": {
+    "defaultMode": "auto",
+    "allow": [
+      "Bash(git:*)",
+      "Bash(chezmoi:*)",
+      "Bash(gh:*)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)"
+    ],
+    "deny": []
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "input=$(cat); cmd=$(printf '%s' \"$input\" | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d.get('command',''))\"); if printf '%s' \"$cmd\" | grep -qE '(--no-verify|git reset --hard|git clean -[fdx]|rm -rf)'; then printf '{\"decision\":\"block\",\"reason\":\"Dangerous destructive command blocked. Confirm intent with user before proceeding.\"}'; exit 2; fi"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '{\"hookSpecificOutput\":{\"hookEventName\":\"Stop\",\"additionalContext\":\"Before finishing: run chezmoi status to confirm working tree is clean, confirm all changes are committed and pushed to github.com/ismail-kattakath/dotfiles, and verify the task is complete.\"}}'"
+          }
+        ]
+      }
+    ]
+  }
+}
