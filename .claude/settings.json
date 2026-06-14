@@ -52,7 +52,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "SLUG=$(git remote get-url origin 2>/dev/null | sed -E 's|.*github\\.com[:/]||;s|\\.git$||'); python3 -c 'import json,sys; s=sys.argv[1]; print(json.dumps({\"hookSpecificOutput\": {\"hookEventName\": \"Stop\", \"additionalContext\": \"Before finishing:\\n1. Run: chezmoi status (must be empty)\\n2. Confirm changes committed and pushed to github.com/\"+s+\"\\n3. Verify no .tmpl files were added\\n4. Verify no macOS-specific content was added\"}}))' \"$SLUG\""
+            "command": "SLUG=$(git remote get-url origin 2>/dev/null | sed -E 's|.*github\\.com[:/]||;s|\\.git$||'); python3 -c 'import json,sys; s=sys.argv[1]; print(json.dumps({\"systemMessage\": \"Before finishing:\\n1. Run: chezmoi status (must be empty)\\n2. Confirm changes committed and pushed to github.com/\"+s+\"\\n3. Verify no .tmpl files were added\\n4. Verify no macOS-specific content was added\"}))' \"$SLUG\""
           }
         ]
       }
