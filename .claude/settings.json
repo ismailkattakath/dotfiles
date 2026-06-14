@@ -7,6 +7,7 @@
       "Bash(git:*)",
       "Bash(chezmoi:*)",
       "Bash(gh:*)",
+      "Bash(source:*)",
       "Read(*)",
       "Write(*)",
       "Edit(*)"
@@ -14,6 +15,17 @@
     "deny": []
   },
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '{\"systemMessage\":\"DOTFILES CONTEXT\\nSource dir: ~/dotfiles (chezmoi sourceDir)\\nRepo: github.com/ismail-kattakath/dotfiles\\nPurpose: container/Codespaces identity files only — no shell config, no macOS, no templates\\n\\nKEY INVARIANTS (never violate):\\n- No .tmpl files, no {{ if darwin }} blocks\\n- No .zshrc/.zprofile/Brewfile\\n- Credential helper must be !gh (not /opt/homebrew/bin/gh)\\n- No secrets or tokens\\n- install.sh must stay in .chezmoiignore\\n\\nCOMMON COMMANDS: /status /apply /add /verify-container\"}'"
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
@@ -21,6 +33,15 @@
           {
             "type": "command",
             "command": "input=$(cat); cmd=$(printf '%s' \"$input\" | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d.get('command',''))\"); if printf '%s' \"$cmd\" | grep -qE '(--no-verify|git reset --hard|git clean -[fdx]|rm -rf)'; then printf '{\"decision\":\"block\",\"reason\":\"Dangerous destructive command blocked. Confirm intent with user before proceeding.\"}'; exit 2; fi"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "input=$(cat); path=$(printf '%s' \"$input\" | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d.get('file_path','') or d.get('path',''))\"); if printf '%s' \"$path\" | grep -qE '\\.tmpl$'; then printf '{\"decision\":\"block\",\"reason\":\"Template files (.tmpl) are forbidden in this dotfiles repo. All files must be plain — no chezmoi templating, no platform switching.\"}'; exit 2; fi; if printf '%s' \"$path\" | grep -qE 'dot_zshrc|dot_zprofile|dot_bashrc|Brewfile'; then printf '{\"decision\":\"block\",\"reason\":\"Shell config files and Brewfiles are forbidden — this dotfiles repo is container-only. Shell setup is handled by devcontainer features.\"}'; exit 2; fi"
           }
         ]
       }
@@ -31,7 +52,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "printf '{\"hookSpecificOutput\":{\"hookEventName\":\"Stop\",\"additionalContext\":\"Before finishing: run chezmoi status to confirm working tree is clean, confirm all changes are committed and pushed to github.com/ismail-kattakath/dotfiles, and verify the task is complete.\"}}'"
+            "command": "printf '{\"hookSpecificOutput\":{\"hookEventName\":\"Stop\",\"additionalContext\":\"Before finishing:\\n1. Run: chezmoi status (must be empty — source and home in sync)\\n2. Confirm all source changes committed and pushed to github.com/ismail-kattakath/dotfiles\\n3. Verify no .tmpl files were added\\n4. Verify no macOS-specific content was added\"}}'"
           }
         ]
       }
