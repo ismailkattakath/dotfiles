@@ -1,0 +1,6 @@
+# Machine-local SSH hosts (jump hosts, tunnels, VMs) — not committed
+Include ~/.ssh/config.local
+
+Host *
+    AddKeysToAgent yes
+    IdentityFile ~/.ssh/id_ed25519

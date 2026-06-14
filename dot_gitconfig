@@ -1,0 +1,36 @@
+[user]
+    name = ismail-kattakath
+    email = 88331242+ismail-kattakath@users.noreply.github.com
+
+[core]
+    excludesfile = ~/.gitignore_global
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = false
+
+[push]
+    autoSetupRemote = true
+
+[commit]
+    template = ~/.stCommitMsg
+
+[alias]
+    st    = status -sb
+    co    = checkout
+    undo  = reset --soft HEAD~1
+    pushf = push --force-with-lease
+    lg    = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+
+[credential "https://github.com"]
+    helper =
+    helper = !gh auth git-credential
+
+[credential "https://gist.github.com"]
+    helper =
+    helper = !gh auth git-credential
+
+[includeIf "gitdir:~/infin8it/"]
+    path = ~/.gitconfig-infin8it

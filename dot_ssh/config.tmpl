@@ -1,9 +1,0 @@
-# Machine-local SSH hosts (DevPod, jump hosts, tunnels, VM managers) — not committed
-Include ~/.ssh/config.local
-
-Host *
-    AddKeysToAgent yes
-{{- if eq .chezmoi.os "darwin" }}
-    UseKeychain yes
-{{- end }}
-    IdentityFile ~/.ssh/id_ed25519
