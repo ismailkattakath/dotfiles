@@ -22,7 +22,6 @@ Plain files only — except identity templates (`*.tmpl`) which inject `name`, `
 ├── install.sh                  Bootstrap for devcontainer features / Codespaces
 ├── .chezmoiignore              Excludes install.sh from being applied to ~/
 ├── dot_gitconfig.tmpl          Git identity, aliases, SSH signing, credential helper
-├── dot_gitconfig-infin8it.tmpl Work identity override for ~/infin8it/ repos
 ├── dot_gitignore_global        Global gitignore (.DS_Store, .env, *.swp)
 ├── dot_editorconfig            Consistent indent/charset across all editors
 ├── dot_stCommitMsg             Commit message template
