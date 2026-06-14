@@ -1,0 +1,2 @@
+# Not a dotfile — exists for the devcontainer dotfiles feature to call
+install.sh

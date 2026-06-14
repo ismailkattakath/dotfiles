@@ -1,6 +1,7 @@
 [user]
     name = ismail-kattakath
     email = 88331242+ismail-kattakath@users.noreply.github.com
+    signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAq9VALx6Y6OERWlWWvudcTUEO29BMFl3bbGwoVSTGsS
 
 [core]
     excludesfile = ~/.gitignore_global
