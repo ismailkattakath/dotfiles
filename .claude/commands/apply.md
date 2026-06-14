@@ -23,7 +23,8 @@ chezmoi status
 4. If there are uncommitted changes in the source repo, commit and push:
 
 ```bash
-cd ~/dotfiles
+ROOT=$(git rev-parse --show-toplevel)
+cd "$ROOT"
 git status
 git add -A
 git diff --staged

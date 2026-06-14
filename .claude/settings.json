@@ -21,7 +21,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "printf '{\"systemMessage\":\"DOTFILES CONTEXT\\nSource dir: ~/dotfiles (chezmoi sourceDir)\\nRepo: github.com/ismail-kattakath/dotfiles\\nPurpose: container/Codespaces identity files only — no shell config, no macOS, no templates\\n\\nKEY INVARIANTS (never violate):\\n- No .tmpl files, no {{ if darwin }} blocks\\n- No .zshrc/.zprofile/Brewfile\\n- Credential helper must be !gh (not /opt/homebrew/bin/gh)\\n- No secrets or tokens\\n- install.sh must stay in .chezmoiignore\\n\\nCOMMON COMMANDS: /status /apply /add /verify-container\"}'"
+            "command": "ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd); SLUG=$(git remote get-url origin 2>/dev/null | sed -E 's|.*github\\.com[:/]||;s|\\.git$||'); python3 -c 'import json,sys; r,s=sys.argv[1:]; print(json.dumps({\"systemMessage\": \"DOTFILES CONTEXT\\nSource dir: \"+r+\"\\nRepo: github.com/\"+s+\"\\nChezmoi source: chezmoi source-path\\n\\nKEY INVARIANTS (never violate):\\n- No .tmpl files, no {{ if darwin }} blocks\\n- No .zshrc/.zprofile/Brewfile\\n- Credential helper must be !gh (not absolute path)\\n- No secrets or tokens\\n- install.sh must stay in .chezmoiignore\\n\\nCOMMON COMMANDS: /status /apply /add /verify-container\"}))' \"$ROOT\" \"$SLUG\""
           }
         ]
       }
@@ -52,7 +52,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "printf '{\"hookSpecificOutput\":{\"hookEventName\":\"Stop\",\"additionalContext\":\"Before finishing:\\n1. Run: chezmoi status (must be empty — source and home in sync)\\n2. Confirm all source changes committed and pushed to github.com/ismail-kattakath/dotfiles\\n3. Verify no .tmpl files were added\\n4. Verify no macOS-specific content was added\"}}'"
+            "command": "SLUG=$(git remote get-url origin 2>/dev/null | sed -E 's|.*github\\.com[:/]||;s|\\.git$||'); python3 -c 'import json,sys; s=sys.argv[1]; print(json.dumps({\"hookSpecificOutput\": {\"hookEventName\": \"Stop\", \"additionalContext\": \"Before finishing:\\n1. Run: chezmoi status (must be empty)\\n2. Confirm changes committed and pushed to github.com/\"+s+\"\\n3. Verify no .tmpl files were added\\n4. Verify no macOS-specific content was added\"}}))' \"$SLUG\""
           }
         ]
       }

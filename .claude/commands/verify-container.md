@@ -2,16 +2,28 @@
 description: Rebuild the base devcontainer and verify dotfiles are correctly synced inside it
 ---
 
+Derive paths dynamically — the devcontainer repo is expected as a sibling of this dotfiles repo:
+
 ```bash
-source ~/.secrets
-docker stop $(docker ps -q --filter "label=devcontainer.local_folder=$HOME/USER-workspace/devcontainer") 2>/dev/null || true
-devcontainer up --workspace-folder ~/USER-workspace/devcontainer --remove-existing-container 2>&1 | tail -10
+DOTFILES_ROOT=$(git rev-parse --show-toplevel)
+DEVCONTAINER_ROOT=$(dirname "$DOTFILES_ROOT")/devcontainer
+echo "Dotfiles root: $DOTFILES_ROOT"
+echo "Devcontainer root: $DEVCONTAINER_ROOT"
+ls "$DEVCONTAINER_ROOT/.devcontainer/devcontainer.json" || echo "ERROR: devcontainer repo not found at expected path"
 ```
 
-Then inspect what was synced:
+Rebuild the container:
 
 ```bash
-source ~/.secrets && devcontainer exec --workspace-folder ~/USER-workspace/devcontainer bash -c "
+source ~/.secrets
+docker stop $(docker ps -q --filter "label=devcontainer.local_folder=$DEVCONTAINER_ROOT") 2>/dev/null || true
+devcontainer up --workspace-folder "$DEVCONTAINER_ROOT" --remove-existing-container 2>&1 | tail -10
+```
+
+Inspect what was synced:
+
+```bash
+source ~/.secrets && devcontainer exec --workspace-folder "$DEVCONTAINER_ROOT" bash -c "
   echo '=== .gitconfig (key sections) ==='
   grep -E 'name|email|signingkey|format|helper|gpgsign' ~/.gitconfig
 
@@ -34,6 +46,6 @@ source ~/.secrets && devcontainer exec --workspace-folder ~/USER-workspace/devco
 ```
 
 Report any issues found. Common problems:
-- `!/opt/homebrew/bin/gh` in credential helper → must be `!gh auth git-credential`
+- Absolute path in credential helper → must be `!gh auth git-credential` (no path prefix)
 - `UseKeychain yes` in SSH config → must not appear in container
-- `CLAUDE_CODE_OAUTH_TOKEN` not set → user must source `~/.secrets` before starting devcontainer
+- `CLAUDE_CODE_OAUTH_TOKEN` not set → user must source `~/.secrets` before starting container

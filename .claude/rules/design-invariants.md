@@ -9,7 +9,7 @@ These rules are non-negotiable. Violating any of them breaks the container/Codes
 - `Brewfile` — macOS only, not applicable to containers
 - `run_once_*` scripts — features handle installation
 - Secrets or tokens of any kind — not even as examples
-- Absolute macOS paths (e.g. `/opt/homebrew/`, `/Users/USER/`, `/Applications/`)
+- Absolute macOS paths (e.g. `/opt/homebrew/`, `/Users/<username>/`, `/Applications/`)
 - `UseKeychain yes` in SSH config — macOS keychain is not available in containers
 
 ## Always ensure
