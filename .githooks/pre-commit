@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Block commits containing secrets detected by gitleaks
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks protect --staged --redact --no-banner
+fi
