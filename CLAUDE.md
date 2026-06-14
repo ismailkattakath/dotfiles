@@ -2,7 +2,7 @@
 
 Chezmoi-managed dotfiles for devcontainers and Codespaces.
 Applies git identity, SSH config, and editor consistency across all container environments.
-Plain files only — no templates, no platform switching, no macOS content.
+Plain files only — except identity templates (`*.tmpl`) which inject `name`, `email`, `signingKey` from `chezmoi.toml [data]`.
 
 ## Commands
 
@@ -21,8 +21,8 @@ Plain files only — no templates, no platform switching, no macOS content.
 ~/dotfiles/
 ├── install.sh                  Bootstrap for devcontainer features / Codespaces
 ├── .chezmoiignore              Excludes install.sh from being applied to ~/
-├── dot_gitconfig               Git identity, aliases, SSH signing, credential helper
-├── dot_gitconfig-infin8it      Work email override for ~/infin8it/ repos
+├── dot_gitconfig.tmpl          Git identity, aliases, SSH signing, credential helper
+├── dot_gitconfig-infin8it.tmpl Work identity override for ~/infin8it/ repos
 ├── dot_gitignore_global        Global gitignore (.DS_Store, .env, *.swp)
 ├── dot_editorconfig            Consistent indent/charset across all editors
 ├── dot_stCommitMsg             Commit message template
@@ -35,7 +35,7 @@ Plain files only — no templates, no platform switching, no macOS content.
 
 ## Conventions
 
-- **Plain files, no templates** — no `.tmpl` suffix, no `{{ if darwin }}` blocks anywhere
+- **Templates for identity only** — `*.tmpl` files use `{{ .name }}`, `{{ .email }}`, `{{ .signingKey }}`; no `{{ if }}` blocks ever
 - **Linux-only** — targets container/Codespaces environments; macOS config lives on the host outside this repo
 - **No secrets** — tokens come from `~/.secrets` on host (never committed) or Codespaces secrets
 - **No shell config** — `.zshrc`/`.zprofile` are absent by design; devcontainer features manage shell

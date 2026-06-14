@@ -20,10 +20,9 @@ if [ -n "${DEVCONTAINER:-}" ] || [ -n "${CODESPACE_NAME:-}" ] || [ -n "${CI:-}" 
   if [ ! -f "$HOME/.config/chezmoi/chezmoi.toml" ]; then
     cat > "$HOME/.config/chezmoi/chezmoi.toml" << EOF
 [data]
-    name        = "${GIT_AUTHOR_NAME:-ismail-kattakath}"
-    personalEmail = "${GIT_AUTHOR_EMAIL:-88331242+ismail-kattakath@users.noreply.github.com}"
-    workEmail   = "88331242+ismail-kattakath@users.noreply.github.com"
-    signingKey  = ""
+    name       = "${GIT_AUTHOR_NAME:-Ismail Kattakath}"
+    email      = "${GIT_AUTHOR_EMAIL:-88331242+ismail-kattakath@users.noreply.github.com}"
+    signingKey = "${GIT_SIGNING_KEY:-}"
 EOF
   fi
 fi
