@@ -16,6 +16,16 @@
 
 [commit]
     template = ~/.stCommitMsg
+    gpgsign = true
+
+[tag]
+    gpgsign = true
+
+[gpg]
+    format = ssh
+
+[gpg "ssh"]
+    allowedSignersFile = ~/.ssh/allowed_signers
 
 [alias]
     st    = status -sb
