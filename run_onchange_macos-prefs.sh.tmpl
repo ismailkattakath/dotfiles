@@ -1,0 +1,12 @@
+#!/bin/sh
+# iterm2:   {{ include "macos/com.googlecode.iterm2.plist" | sha256sum }}
+# terminal: {{ include "macos/com.apple.Terminal.plist" | sha256sum }}
+
+[ "$(uname)" = "Darwin" ] || exit 0
+
+MACOS_DIR="$(chezmoi source-path)/macos"
+
+defaults import com.googlecode.iterm2 "$MACOS_DIR/com.googlecode.iterm2.plist"
+defaults import com.apple.Terminal "$MACOS_DIR/com.apple.Terminal.plist"
+
+echo "macOS preferences applied"
