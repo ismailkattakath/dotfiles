@@ -5,7 +5,6 @@
 **Chezmoi-managed dotfiles for devcontainers, Codespaces, and macOS — with built-in secret-scanning and a Claude Code guardrail layer.**
 
 [![Managed with chezmoi](https://img.shields.io/badge/managed%20with-chezmoi-1f6feb?logo=git&logoColor=white)](https://www.chezmoi.io/)
-[![Platform](https://img.shields.io/badge/platform-Linux%20%C2%B7%20macOS%20%C2%B7%20Codespaces-555)](#scope)
 [![Secret scan](https://github.com/ismailkattakath/dotfiles/actions/workflows/secret-scan.yml/badge.svg)](.github/workflows/secret-scan.yml)
 [![Pre-commit: gitleaks](https://img.shields.io/badge/pre--commit-gitleaks-orange)](.githooks/pre-commit)
 [![Signed commits](https://img.shields.io/badge/commits-SSH%20signed-success?logo=github)](#security)
