@@ -1,8 +1,10 @@
 # dotfiles
 
-Chezmoi-managed dotfiles for devcontainers and Codespaces.
-Applies git identity, SSH config, and editor consistency across all container environments.
-Plain files only — except identity templates (`*.tmpl`) which inject `name`, `email`, `signingKey` from `chezmoi.toml [data]`.
+Chezmoi-managed dotfiles for devcontainers, Codespaces, and the host.
+Applies git identity, SSH config, editor consistency, gh prefs (everywhere), plus host macOS terminal preferences.
+Mostly plain files; `*.tmpl` files are allowed only to inject identity vars (`name`, `email`, `signingKey`, `infin8Email` from `chezmoi.toml [data]`) or carry the macOS-prefs `sha256sum` change-guard — never `{{ if }}` platform switching.
+
+> Security/design rules live in `.claude/rules/design-invariants.md` (non-negotiable) and `.claude/rules/operations.md`. Hooks in `.claude/settings.json` enforce them. Run `/audit` before pushing.
 
 ## Commands
 
@@ -19,24 +21,30 @@ Plain files only — except identity templates (`*.tmpl`) which inject `name`, `
 
 ```
 ~/dotfiles/
-├── install.sh                  Bootstrap for devcontainer features / Codespaces
-├── .chezmoiignore              Excludes install.sh from being applied to ~/
-├── dot_gitconfig.tmpl          Git identity, aliases, SSH signing, credential helper
-├── dot_gitignore_global        Global gitignore (.DS_Store, .env, *.swp)
-├── dot_editorconfig            Consistent indent/charset across all editors
-├── dot_stCommitMsg             Commit message template
-├── dot_ssh/
-│   └── config                  SSH defaults: AddKeysToAgent, identity file
-└── dot_config/
-    └── gh/
-        └── config.yml          gh CLI preferences and co alias
+├── install.sh                       Bootstrap for devcontainer features / Codespaces
+├── .chezmoiignore                   Excludes install.sh from being applied to ~/
+├── dot_gitconfig.tmpl               Git identity, aliases, SSH signing, credential helper, includeIf
+├── dot_gitconfig_infin8.tmpl        Identity override for ~/infin8it/ repos ({{ .infin8Email }})
+├── dot_gitignore_global             Global gitignore (.DS_Store, .env, *.swp)
+├── dot_editorconfig                 Consistent indent/charset across all editors
+├── dot_stCommitMsg                  Commit message template
+├── dot_ssh/config                   SSH defaults: AddKeysToAgent, identity file, Include config.local
+├── dot_config/gh/config.yml         gh CLI preferences and co alias
+├── macos/                           Host macOS prefs (Terminal + iTerm2) — scrubbed of PII
+│   ├── com.apple.Terminal.plist
+│   └── com.googlecode.iterm2.plist
+├── run_onchange_macos-prefs.sh.tmpl Imports macos/*.plist on Darwin when they change (sha256sum guard)
+├── .githooks/pre-commit             gitleaks secret scan (local guard)
+├── .github/workflows/secret-scan.yml  gitleaks secret scan (CI guard)
+└── .claude/                         rules, commands, settings, hooks for this repo
 ```
 
 ## Conventions
 
-- **Templates for identity only** — `*.tmpl` files use `{{ .name }}`, `{{ .email }}`, `{{ .signingKey }}`; no `{{ if }}` blocks ever
-- **Linux-only** — targets container/Codespaces environments; macOS config lives on the host outside this repo
-- **No secrets** — tokens come from `~/.secrets` on host (never committed) or Codespaces secrets
+- **Templates for identity + the macOS guard only** — `*.tmpl` may inject `{{ .name }}`, `{{ .email }}`, `{{ .signingKey }}`, `{{ .infin8Email }}` or the macOS-prefs sha256sum guard; no `{{ if }}` platform blocks ever
+- **Cross-platform** — container/Codespaces dotfiles apply everywhere; `macos/*.plist` apply on Darwin only (no-op on Linux)
+- **No secrets / no hardcoded emails** — tokens come from `~/.secrets` (never committed); identity emails come from chezmoi data vars, never literals in tracked files
+- **Privacy** — macOS plists must be scrubbed of usernames and security-scoped path bookmarks (`NSOSPLastRootDirectory`, `BackgroundImageBookmark`) before commit
 - **No shell config** — `.zshrc`/`.zprofile` are absent by design; devcontainer features manage shell
 - **Credential helper** — uses `!gh auth git-credential` (no Homebrew path) for cross-platform compatibility
 - **SSH signing** — `user.signingkey` is the ed25519 public key; `gpg.format = ssh`

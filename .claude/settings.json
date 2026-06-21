@@ -7,12 +7,17 @@
       "Bash(git:*)",
       "Bash(chezmoi:*)",
       "Bash(gh:*)",
-      "Bash(source:*)",
+      "Bash(defaults:*)",
+      "Bash(plutil:*)",
       "Read(*)",
       "Write(*)",
       "Edit(*)"
     ],
-    "deny": []
+    "deny": [
+      "Read(~/.secrets)",
+      "Read(~/.ssh/config.local)",
+      "Read(~/.ssh/id_ed25519)"
+    ]
   },
   "hooks": {
     "UserPromptSubmit": [
@@ -21,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd); SLUG=$(git remote get-url origin 2>/dev/null | sed -E 's|.*github\\.com[:/]||;s|\\.git$||'); python3 -c 'import json,sys; r,s=sys.argv[1:]; print(json.dumps({\"systemMessage\": \"DOTFILES CONTEXT\\nSource dir: \"+r+\"\\nRepo: github.com/\"+s+\"\\nChezmoi source: chezmoi source-path\\n\\nKEY INVARIANTS (never violate):\\n- No .tmpl files, no {{ if darwin }} blocks\\n- No .zshrc/.zprofile/Brewfile\\n- Credential helper must be !gh (not absolute path)\\n- No secrets or tokens\\n- install.sh must stay in .chezmoiignore\\n\\nCOMMON COMMANDS: /status /apply /add /verify-container\"}))' \"$ROOT\" \"$SLUG\""
+            "command": "ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd); SLUG=$(git remote get-url origin 2>/dev/null | sed -E 's|.*github\\.com[:/]||;s|\\.git$||'); python3 -c 'import json,sys; r,s=sys.argv[1:]; print(json.dumps({\"systemMessage\": \"DOTFILES CONTEXT\\nSource dir: \"+r+\"\\nRepo: github.com/\"+s+\"\\n\\nKEY INVARIANTS (never violate):\\n- Templates ONLY for identity vars (.name/.email/.signingKey/.infin8Email) or the macOS-prefs sha256sum guard — never {{ if }} platform blocks\\n- No .zshrc/.zprofile/Brewfile (devcontainer features own the shell)\\n- Credential helper must be !gh auth git-credential (not an absolute path)\\n- NO secrets, tokens, or hardcoded real emails — use chezmoi data or noreply\\n- macOS plists must be scrubbed of usernames/path bookmarks before commit\\n- install.sh must stay in .chezmoiignore\\n\\nSCOPE: container/Codespaces dotfiles + host macOS terminal prefs (macos/*.plist via run_onchange)\\nCOMMANDS: /status /apply /add /audit /verify-container\"}))' \"$ROOT\" \"$SLUG\""
           }
         ]
       }
@@ -41,7 +46,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "input=$(cat); path=$(printf '%s' \"$input\" | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d.get('file_path','') or d.get('path',''))\"); if printf '%s' \"$path\" | grep -qE '\\.tmpl$'; then printf '{\"decision\":\"block\",\"reason\":\"Template files (.tmpl) are forbidden in this dotfiles repo. All files must be plain — no chezmoi templating, no platform switching.\"}'; exit 2; fi; if printf '%s' \"$path\" | grep -qE 'dot_zshrc|dot_zprofile|dot_bashrc|Brewfile'; then printf '{\"decision\":\"block\",\"reason\":\"Shell config files and Brewfiles are forbidden — this dotfiles repo is container-only. Shell setup is handled by devcontainer features.\"}'; exit 2; fi"
+            "command": "input=$(cat); path=$(printf '%s' \"$input\" | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d.get('file_path','') or d.get('path',''))\"); content=$(printf '%s' \"$input\" | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d.get('content','') or d.get('new_string',''))\"); if printf '%s' \"$path\" | grep -qE 'dot_zshrc|dot_zprofile|dot_bashrc|Brewfile'; then printf '{\"decision\":\"block\",\"reason\":\"Shell config files and Brewfiles are forbidden — shell setup is owned by devcontainer features.\"}'; exit 2; fi; if printf '%s' \"$content\" | grep -qE '\\{\\{[^}]*\\bif\\b[^}]*\\}\\}'; then printf '{\"decision\":\"block\",\"reason\":\"Conditional template blocks ({{ if ... }}) are forbidden. Templates may only inject identity vars (.name/.email/.signingKey/.infin8Email) or the macOS-prefs sha256sum guard — never platform switching.\"}'; exit 2; fi; if printf '%s' \"$content\" | grep -qiE '(ghp_|gho_|github_pat_|AKIA|xox[baprs]-|-----BEGIN [A-Z ]*PRIVATE KEY|@infin8it\\.ca|@etuper\\.com)'; then printf '{\"decision\":\"block\",\"reason\":\"Possible secret or hardcoded personal email detected. Use chezmoi data vars (e.g. {{ .infin8Email }}) or a GitHub noreply address — never commit real emails or tokens.\"}'; exit 2; fi"
           }
         ]
       }
@@ -52,7 +57,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "SLUG=$(git remote get-url origin 2>/dev/null | sed -E 's|.*github\\.com[:/]||;s|\\.git$||'); python3 -c 'import json,sys; s=sys.argv[1]; print(json.dumps({\"systemMessage\": \"Before finishing:\\n1. Run: chezmoi status (must be empty)\\n2. Confirm changes committed and pushed to github.com/\"+s+\"\\n3. Verify no .tmpl files were added\\n4. Verify no macOS-specific content was added\"}))' \"$SLUG\""
+            "command": "SLUG=$(git remote get-url origin 2>/dev/null | sed -E 's|.*github\\.com[:/]||;s|\\.git$||'); python3 -c 'import json,sys; s=sys.argv[1]; print(json.dumps({\"systemMessage\": \"Before finishing:\\n1. Run: chezmoi status (should be empty/expected)\\n2. Run /audit (gitleaks + email/PII scan) if any files changed\\n3. Confirm no secrets, tokens, or hardcoded real emails were committed\\n4. Confirm any macOS plists are scrubbed of usernames/path bookmarks\\n5. Confirm changes committed and pushed to github.com/\"+s+\"\"}))' \"$SLUG\""
           }
         ]
       }
