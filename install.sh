@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Bootstrap script for ismail-kattakath/dotfiles.
+# Bootstrap script for ismailkattakath/dotfiles.
 # Called by the devcontainer dotfiles feature and usable on any new machine.
 set -euo pipefail
 
@@ -21,7 +21,7 @@ if [ -n "${DEVCONTAINER:-}" ] || [ -n "${CODESPACE_NAME:-}" ] || [ -n "${CI:-}" 
     cat > "$HOME/.config/chezmoi/chezmoi.toml" << EOF
 [data]
     name       = "${GIT_AUTHOR_NAME:-Ismail Kattakath}"
-    email      = "${GIT_AUTHOR_EMAIL:-88331242+ismail-kattakath@users.noreply.github.com}"
+    email      = "${GIT_AUTHOR_EMAIL:-8927166+ismailkattakath@users.noreply.github.com}"
     signingKey = "${GIT_SIGNING_KEY:-}"
 EOF
   fi
