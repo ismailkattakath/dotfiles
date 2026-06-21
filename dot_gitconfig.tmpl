@@ -3,6 +3,11 @@
     email = {{ .email }}
     signingkey = {{ .signingKey }}
 
+# Per-directory identity override. Repos under ~/infin8it/ author commits as the
+# Infin8 work email (verified on the ismailkattakath account) so attribution stays correct.
+[includeIf "gitdir:~/infin8it/"]
+    path = ~/.gitconfig_infin8
+
 [core]
     excludesfile = ~/.gitignore_global
 
