@@ -1,5 +1,11 @@
-# Not a dotfile — exists for the devcontainer dotfiles feature to call
+# Not a dotfile — exists for the devcontainer / Codespaces dotfiles feature to call
 install.sh
 
 # macOS app preferences — applied via run_onchange_macos-prefs.sh.tmpl, not directly
 macos
+
+# Repo docs & metadata — must never be copied into $HOME (chezmoi applies any
+# non-dot, non-ignored file at the source root; Codespaces fallback would symlink them too)
+README.md
+CLAUDE.md
+LICENSE

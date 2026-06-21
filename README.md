@@ -31,7 +31,6 @@ layer enforce the project's invariants automatically.
 |---|---|---|
 | **Dotfiles** | git identity & signing, SSH config, `editorconfig`, global gitignore, `gh` prefs, commit-message template | Linux, macOS, Codespaces |
 | **macOS prefs** | Terminal.app & iTerm2 preferences (`macos/*.plist`) | macOS host only (no-op on Linux) |
-| **Per-directory identity** | repos under `~/infin8it/` author commits with a work email via `includeIf` | anywhere chezmoi applies |
 
 ## Quick start
 
@@ -46,7 +45,20 @@ chezmoi apply     # apply source → $HOME
 ```
 
 In **devcontainers / Codespaces**, `install.sh` is invoked by the dotfiles feature; it installs
-chezmoi, writes a minimal config from `GIT_AUTHOR_*` env vars, and applies.
+chezmoi, resolves the identity vars the templates reference (`name`, `email`, `signingKey`), then
+applies. Identity is **never hardcoded to a person** — it is resolved in order:
+
+1. **Explicit env vars** — `GIT_AUTHOR_NAME` / `GIT_AUTHOR_EMAIL` / `GIT_SIGNING_KEY`
+2. **The GitHub account** — auto-derived via `gh` (Codespaces authenticates it with `GITHUB_TOKEN`):
+   `name` from the account, `email` as the account's `<id>+<login>@users.noreply.github.com`
+3. **Existing git config** — whatever `git config --global` already knows
+
+Signing: in **Codespaces** the script defers to GitHub's own commit-signing setup (the
+[GPG-verification docs](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-gpg-verification-for-github-codespaces)
+warn that dotfiles git config "may conflict with the configuration that GitHub Codespaces requires
+to sign commits"), so it drops our SSH-signing override and lets GitHub win. In other non-interactive
+envs (local devcontainers / CI) SSH signing stays on only when a `GIT_SIGNING_KEY` is actually
+present — otherwise it is disabled so `git commit` works out of the box.
 
 ## Repository layout
 
@@ -55,8 +67,7 @@ dotfiles/
 ├── install.sh                       Bootstrap for the devcontainer feature / Codespaces (not applied to ~/)
 ├── .chezmoiignore                   Excludes install.sh and macos/ from direct application
 │
-├── dot_gitconfig.tmpl               Git identity, aliases, SSH signing, gh credential helper, includeIf
-├── dot_gitconfig_infin8.tmpl        Identity override for ~/infin8it/ repos (injects work email)
+├── dot_gitconfig.tmpl               Git identity, aliases, SSH signing, gh credential helper
 ├── dot_gitignore_global             Global gitignore
 ├── dot_editorconfig                 Editor indent/charset consistency
 ├── dot_stCommitMsg                  Commit message template
@@ -82,8 +93,6 @@ Templates never contain real identity values — they reference chezmoi data:
     name       = {{ .name }}
     email      = {{ .email }}
     signingkey = {{ .signingKey }}
-[includeIf "gitdir:~/infin8it/"]
-    path = ~/.gitconfig_infin8        # → email = {{ .infin8Email }}
 ```
 
 Values are defined per-environment:
@@ -117,7 +126,6 @@ The `.claude/` directory makes this repo self-documenting and self-guarding when
 | `/apply` | Apply source → home, then commit & push source changes |
 | `/add <path>` | Track a new dotfile (after invariant checks) |
 | `/audit` | Scan for secrets, emails, tokens, and PII before pushing |
-| `/verify-container` | Rebuild the base devcontainer and verify dotfiles synced inside |
 
 **Guardrails** (`.claude/settings.json` hooks) block, automatically: `{{ if }}` platform-switching
 templates, hardcoded secrets/emails, shell-config files, and destructive git commands

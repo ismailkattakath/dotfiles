@@ -4,7 +4,6 @@ Paths are always derived dynamically from the git repo — never hardcoded.
 
 ```bash
 ROOT=$(git rev-parse --show-toplevel)           # this repo's root
-DEVCONTAINER=$(dirname "$ROOT")/devcontainer    # sibling devcontainer repo
 ```
 
 ## Adding a new dotfile
@@ -38,23 +37,6 @@ cd "$ROOT" && git add -A && git commit -m "..." && git push
 ```bash
 chezmoi apply --force
 chezmoi status   # must be empty after apply
-```
-
-## Verifying dotfiles in a container
-
-```bash
-ROOT=$(git rev-parse --show-toplevel)
-DEVCONTAINER=$(dirname "$ROOT")/devcontainer
-
-source ~/.secrets
-docker stop $(docker ps -q --filter "label=devcontainer.local_folder=$DEVCONTAINER") 2>/dev/null || true
-devcontainer up --workspace-folder "$DEVCONTAINER" --remove-existing-container
-
-devcontainer exec --workspace-folder "$DEVCONTAINER" bash -c "
-  echo '=== gitconfig ===' && cat ~/.gitconfig
-  echo '=== ssh/config ===' && cat ~/.ssh/config
-  echo '=== signing ===' && git config --global gpg.format
-"
 ```
 
 ## Pushing changes

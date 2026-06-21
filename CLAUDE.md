@@ -2,7 +2,7 @@
 
 Chezmoi-managed dotfiles for devcontainers, Codespaces, and the host.
 Applies git identity, SSH config, editor consistency, gh prefs (everywhere), plus host macOS terminal preferences.
-Mostly plain files; `*.tmpl` files are allowed only to inject identity vars (`name`, `email`, `signingKey`, `infin8Email` from `chezmoi.toml [data]`) or carry the macOS-prefs `sha256sum` change-guard — never `{{ if }}` platform switching.
+Mostly plain files; `*.tmpl` files are allowed only to inject identity vars (`name`, `email`, `signingKey` from `chezmoi.toml [data]`) or carry the macOS-prefs `sha256sum` change-guard — never `{{ if }}` platform switching.
 
 > Security/design rules live in `.claude/rules/design-invariants.md` (non-negotiable) and `.claude/rules/operations.md`. Hooks in `.claude/settings.json` enforce them. Run `/audit` before pushing.
 
@@ -23,8 +23,7 @@ Mostly plain files; `*.tmpl` files are allowed only to inject identity vars (`na
 ~/dotfiles/
 ├── install.sh                       Bootstrap for devcontainer features / Codespaces
 ├── .chezmoiignore                   Excludes install.sh from being applied to ~/
-├── dot_gitconfig.tmpl               Git identity, aliases, SSH signing, credential helper, includeIf
-├── dot_gitconfig_infin8.tmpl        Identity override for ~/infin8it/ repos ({{ .infin8Email }})
+├── dot_gitconfig.tmpl               Git identity, aliases, SSH signing, credential helper
 ├── dot_gitignore_global             Global gitignore (.DS_Store, .env, *.swp)
 ├── dot_editorconfig                 Consistent indent/charset across all editors
 ├── dot_stCommitMsg                  Commit message template
@@ -41,7 +40,7 @@ Mostly plain files; `*.tmpl` files are allowed only to inject identity vars (`na
 
 ## Conventions
 
-- **Templates for identity + the macOS guard only** — `*.tmpl` may inject `{{ .name }}`, `{{ .email }}`, `{{ .signingKey }}`, `{{ .infin8Email }}` or the macOS-prefs sha256sum guard; no `{{ if }}` platform blocks ever
+- **Templates for identity + the macOS guard only** — `*.tmpl` may inject `{{ .name }}`, `{{ .email }}`, `{{ .signingKey }}` or the macOS-prefs sha256sum guard; no `{{ if }}` platform blocks ever
 - **Cross-platform** — container/Codespaces dotfiles apply everywhere; `macos/*.plist` apply on Darwin only (no-op on Linux)
 - **No secrets / no hardcoded emails** — tokens come from `~/.secrets` (never committed); identity emails come from chezmoi data vars, never literals in tracked files
 - **Privacy** — macOS plists must be scrubbed of usernames and security-scoped path bookmarks (`NSOSPLastRootDirectory`, `BackgroundImageBookmark`) before commit
@@ -55,5 +54,8 @@ Mostly plain files; `*.tmpl` files are allowed only to inject identity vars (`na
 - `install.sh` is called by the devcontainer `dotfiles-sync` feature and Codespaces — NOT applied to `~/`
 - `helpers4/dotfiles-sync` in local devcontainers syncs host's live files; for Codespaces, `install.sh` runs chezmoi
 - Host chezmoi config: `~/.config/chezmoi/chezmoi.toml` → `sourceDir = "~/dotfiles"`
-- `gpgsign = true` works in local devcontainers (`.gnupg/` synced from host) but is skipped in Codespaces
+- `install.sh` must define **every** identity var the templates use (`name`/`email`/`signingKey`); chezmoi's `missingkey=error` aborts the whole apply on any undefined var (this is what would silently break Codespaces)
+- Identity is never hardcoded to a person — resolved in order: explicit `GIT_AUTHOR_*`/`GIT_SIGNING_KEY` env vars → the authenticated GitHub account via `gh` (account name + `<id>+<login>@users.noreply.github.com`) → existing git config
+- `gpgsign = true` is committed, but `install.sh` turns it off when no `GIT_SIGNING_KEY` is present; in Codespaces specifically it defers signing entirely to GitHub's own setup (their GPG-verification docs warn dotfiles git config may conflict with it)
 - GitHub signing key registered at github.com/settings/ssh (signing keys section)
+- Codespaces install order (GitHub-searched): `install.sh` → `install` → `bootstrap[.sh]` → `script/bootstrap` → `setup[.sh]` → `script/setup`; if none exist, dot-files are symlinked into `$HOME` instead

@@ -1,6 +1,0 @@
-# Identity override for repos under ~/infin8it/ (included via includeIf in ~/.gitconfig).
-# Uses the stable Infin8 work email — verified on the ismailkattakath account — so
-# commits attribute correctly regardless of which GitHub account is the org member.
-# Email is injected from chezmoi.toml [data].infin8Email (local-only, never committed).
-[user]
-    email = {{ .infin8Email }}
