@@ -1,0 +1,58 @@
+#!/bin/sh
+# Sync the canonical VS Code user settings (.vscode/settings.json in this repo) into
+# every installed VS Code-family editor, by symlink, so they all share one source of
+# truth. Editing the repo file updates all editors live; committing it versions them.
+#
+# The symlinks keep content synced forever — editing .vscode/settings.json is reflected
+# live in every linked editor. This guard re-runs the linker whenever that file changes;
+# to (re)link a newly installed editor, run `chezmoi apply --force`.
+# settings: {{ include ".vscode/settings.json" | sha256sum }}
+
+set -eu
+
+# Locate the canonical settings file in the chezmoi source tree. chezmoi exports
+# CHEZMOI_SOURCE_DIR to run_ scripts; fall back to `chezmoi source-path` if unset.
+SRC="${CHEZMOI_SOURCE_DIR:-$(chezmoi source-path 2>/dev/null || true)}"
+CANON="$SRC/.vscode/settings.json"
+[ -n "$SRC" ] && [ -f "$CANON" ] || { echo "VS Code settings source not found — skipping."; exit 0; }
+
+# Per-OS base directory for editor user config (shell-detected at runtime, not templated)
+case "$(uname)" in
+  Darwin) BASE="$HOME/Library/Application Support" ;;
+  *)      BASE="${XDG_CONFIG_HOME:-$HOME/.config}" ;;
+esac
+
+# VS Code-family editors. macOS Application Support and Linux .config use identical names.
+# Antigravity ships its config under two dir names across versions ("Antigravity" and
+# the newer "Antigravity IDE") — link whichever exist.
+EDITORS="Code
+Code - Insiders
+VSCodium
+Cursor
+Antigravity
+Antigravity IDE"
+
+link_one() {
+  # Only target editors that are actually installed (their config dir exists).
+  [ -d "$BASE/$1" ] || return 0
+  user_dir="$BASE/$1/User"
+  target="$user_dir/settings.json"
+
+  # Already the correct symlink? nothing to do (stay quiet).
+  if [ -L "$target" ] && [ "$(readlink "$target")" = "$CANON" ]; then
+    return 0
+  fi
+
+  mkdir -p "$user_dir"
+  # Never silently destroy a real, pre-existing settings file — back it up once.
+  if [ -e "$target" ] && [ ! -L "$target" ] && [ ! -e "$target.pre-symlink.bak" ]; then
+    mv "$target" "$target.pre-symlink.bak"
+    echo "  backed up existing $1 settings -> settings.json.pre-symlink.bak"
+  fi
+  ln -sfn "$CANON" "$target"
+  echo "  linked $1/User/settings.json -> repo .vscode/settings.json"
+}
+
+printf '%s\n' "$EDITORS" | while IFS= read -r ed; do
+  [ -n "$ed" ] && link_one "$ed"
+done
