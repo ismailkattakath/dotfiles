@@ -439,5 +439,29 @@
     "**/.mypy_cache": true,
     "**/node_modules": true,
     "**/__pycache__": true
+  },
+  "terminal.integrated.defaultProfile.linux": "zsh",
+  "terminal.integrated.profiles.linux": {
+    "zsh": {
+      "path": "/usr/bin/zsh"
+    },
+    "claude": {
+      "path": "/usr/local/share/nvm/current/bin/claude",
+      "args": [
+        "--permission-mode",
+        "bypassPermissions"
+      ],
+      "icon": "claude",
+      "color": "terminal.ansiYellow"
+    },
+    "psql": {
+      "path": "/usr/bin/psql",
+      "args": [
+        "-U",
+        "postgres"
+      ],
+      "icon": "database",
+      "color": "terminal.ansiCyan"
+    }
   }
 }

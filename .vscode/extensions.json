@@ -10,6 +10,10 @@
     "lfm.vscode-makefile-term",
     "shd101wyy.markdown-preview-enhanced",
     "fuadpashayev.bottom-terminal",
-    "Qvist.jetbrains-new-ui-dark-theme"
+    "Qvist.jetbrains-new-ui-dark-theme",
+    "amazonwebservices.aws-toolkit-vscode",
+    "stripe.vscode-stripe",
+    "bruno-api-client.bruno",
+    "ric-v.postgres-explorer"
   ]
 }
