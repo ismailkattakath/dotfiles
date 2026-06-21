@@ -35,7 +35,6 @@
   "terminal.integrated.drawBoldTextInBrightColors": true,
   "terminal.integrated.tabs.defaultColor": "terminal.ansiMagenta",
   "terminal.integrated.tabs.defaultIcon": "terminal-ubuntu",
-  "terminal.integrated.defaultProfile.linux": "zsh",
   "terminal.integrated.persistentSessionReviveProcess": "onExitAndWindowClose",
   "editor.formatOnSave": true,
   "editor.rulers": [
@@ -45,7 +44,6 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit"
   },
-  "python.defaultInterpreterPath": "/workspaces/${localWorkspaceFolderBasename}/.venv/bin/python",
   "python.terminal.useEnvFile": true,
   "python.useEnvironmentsExtension": false,
   "python.analysis.typeCheckingMode": "basic",
@@ -54,38 +52,9 @@
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.formatOnSave": true
   },
-  "ruff.interpreter": [
-    "/workspaces/${localWorkspaceFolderBasename}/.venv/bin/ruff"
-  ],
-  "mypy-type-checker.path": [
-    "/workspaces/${localWorkspaceFolderBasename}/.venv/bin/mypy"
-  ],
   "mypy-type-checker.reportingScope": "workspace",
   "files.associations": {
     "devcontainer-build.json": "jsonc"
-  },
-  "terminal.integrated.profiles.linux": {
-    "zsh": {
-      "path": "/usr/bin/zsh"
-    },
-    "claude": {
-      "path": "/usr/local/share/nvm/current/bin/claude",
-      "args": [
-        "--permission-mode",
-        "bypassPermissions"
-      ],
-      "icon": "claude",
-      "color": "terminal.ansiYellow"
-    },
-    "psql": {
-      "path": "/usr/bin/psql",
-      "args": [
-        "-U",
-        "postgres"
-      ],
-      "icon": "database",
-      "color": "terminal.ansiCyan"
-    }
   },
   "claudeCode.allowDangerouslySkipPermissions": true,
   "claudeCode.initialPermissionMode": "bypassPermissions",
