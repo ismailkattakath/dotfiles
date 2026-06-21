@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "anthropic.claude-code",
+    "github.vscode-github-actions",
+    "github.vscode-pull-request-github",
+    "ms-azuretools.vscode-docker",
+    "ms-azuretools.vscode-containers",
+    "charliermarsh.ruff",
+    "ms-python.mypy-type-checker",
+    "lfm.vscode-makefile-term",
+    "shd101wyy.markdown-preview-enhanced",
+    "fuadpashayev.bottom-terminal",
+    "Qvist.jetbrains-new-ui-dark-theme"
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "workbench.activityBar.iconSize": "comp",
+  "workbench.colorTheme": "JetBrains New UI Dark Theme",
+  "workbench.activityBar.compact": true,
+  "workbench.editor.splitOnDragAndDrop": false,
+  "workbench.settings.alwaysShowAdvancedSettings": true,
+  "window.density.editorTabHeight": "compact",
+  "chat.agent.enabled": false,
+  "workbench.colorCustomizations": {
+    "terminal.background": "#300A24",
+    "terminal.foreground": "#FFFFFF",
+    "terminal.ansiBlack": "#2E3436",
+    "terminal.ansiRed": "#CC0000",
+    "terminal.ansiGreen": "#4E9A06",
+    "terminal.ansiYellow": "#C4A000",
+    "terminal.ansiBlue": "#3465A4",
+    "terminal.ansiMagenta": "#75507B",
+    "terminal.ansiCyan": "#06989A",
+    "terminal.ansiWhite": "#D3D7CF",
+    "terminal.ansiBrightBlack": "#555753",
+    "terminal.ansiBrightRed": "#EF2929",
+    "terminal.ansiBrightGreen": "#8AE234",
+    "terminal.ansiBrightYellow": "#FCE94F",
+    "terminal.ansiBrightBlue": "#729FCF",
+    "terminal.ansiBrightMagenta": "#AD7FA8",
+    "terminal.ansiBrightCyan": "#34E2E2",
+    "terminal.ansiBrightWhite": "#EEEEEC",
+    "statusBarItem.remoteForeground": "#0c0a14",
+    "statusBarItem.remoteBackground": "#3e3657",
+    "statusBarItem.remoteHoverBackground": "#a98cf0"
+  },
+  "terminal.integrated.fontFamily": "'UbuntuMono Nerd Font', 'Ubuntu Mono', monospace",
+  "terminal.integrated.fontSize": 16,
+  "terminal.integrated.copyOnSelection": true,
+  "terminal.integrated.drawBoldTextInBrightColors": true,
+  "terminal.integrated.tabs.defaultColor": "terminal.ansiMagenta",
+  "terminal.integrated.tabs.defaultIcon": "terminal-ubuntu",
+  "terminal.integrated.defaultProfile.linux": "zsh",
+  "terminal.integrated.persistentSessionReviveProcess": "onExitAndWindowClose",
+  "editor.formatOnSave": true,
+  "editor.rulers": [
+    88,
+    120
+  ],
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "python.defaultInterpreterPath": "/workspaces/${localWorkspaceFolderBasename}/.venv/bin/python",
+  "python.terminal.useEnvFile": true,
+  "python.useEnvironmentsExtension": false,
+  "python.analysis.typeCheckingMode": "basic",
+  "python.testing.pytestEnabled": true,
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true
+  },
+  "ruff.interpreter": [
+    "/workspaces/${localWorkspaceFolderBasename}/.venv/bin/ruff"
+  ],
+  "mypy-type-checker.path": [
+    "/workspaces/${localWorkspaceFolderBasename}/.venv/bin/mypy"
+  ],
+  "mypy-type-checker.reportingScope": "workspace",
+  "files.associations": {
+    "devcontainer-build.json": "jsonc"
+  },
+  "terminal.integrated.profiles.linux": {
+    "zsh": {
+      "path": "/usr/bin/zsh"
+    },
+    "claude": {
+      "path": "/usr/local/share/nvm/current/bin/claude",
+      "args": [
+        "--permission-mode",
+        "bypassPermissions"
+      ],
+      "icon": "claude",
+      "color": "terminal.ansiYellow"
+    },
+    "psql": {
+      "path": "/usr/bin/psql",
+      "args": [
+        "-U",
+        "postgres"
+      ],
+      "icon": "database",
+      "color": "terminal.ansiCyan"
+    }
+  },
+  "claudeCode.allowDangerouslySkipPermissions": true,
+  "claudeCode.initialPermissionMode": "bypassPermissions",
+  "git.addAICoAuthor": "off",
+  "git.autofetch": "all",
+  "git.autoStash": true,
+  "git.branchProtectionPrompt": "alwaysPrompt",
+  "git.closeDiffOnOperation": true,
+  "git.defaultBranchName": "develop",
+  "git.detectWorktrees": true,
+  "git.fetchOnPull": true,
+  "git.mergeEditor": true,
+  "git.openAfterClone": "always",
+  "git.openRepositoryInParentFolders": "always",
+  "git.pullBeforeCheckout": true,
+  "git.rebaseWhenSync": true,
+  "github-actions.workflows.pinned.refresh.enabled": true,
+  "github-actions.workflows.pinned.refresh.interval": 30,
+  "githubPullRequests.defaultDeletionMethod.selectWorktree": true,
+  "githubPullRequests.defaultMergeMethod": "squash",
+  "githubPullRequests.deleteBranchAfterMerge": true,
+  "githubPullRequests.fileListLayout": "flat",
+  "githubPullRequests.notifications": "pullRequests",
+  "merge-conflict.autoNavigateNextConflict.enabled": true,
+  "merge-conflict.diffViewPosition": "Beside",
+  "files.watcherExclude": {
+    "**/cdk.out/**": true,
+    "**/.venv/**": true,
+    "**/.mypy_cache/**": true,
+    "**/.ruff_cache/**": true,
+    "**/.pytest_cache/**": true,
+    "**/__pycache__/**": true,
+    "**/.devpod/**": true,
+    "**/node_modules/**": true
+  },
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.mypy_cache": true,
+    "**/.ruff_cache": true,
+    "**/.pytest_cache": true,
+    "**/cdk.out": true
+  },
+  "search.exclude": {
+    "**/cdk.out": true,
+    "**/.venv": true,
+    "**/.mypy_cache": true,
+    "**/node_modules": true,
+    "**/__pycache__": true
+  }
+}
