@@ -99,7 +99,8 @@ This repo treats configuration as a potential leak surface and guards it on thre
 - **No hardcoded personal data** — emails come from chezmoi data vars or GitHub noreply; macOS
   plists are scrubbed of usernames and security-scoped path bookmarks before commit.
 - **Two-layer scanning** — [gitleaks](https://github.com/gitleaks/gitleaks) runs both as a
-  `.githooks/pre-commit` hook and as a CI workflow on every push.
+  `.githooks/pre-commit` hook and as a CI workflow on every push. CI runs on a **self-hosted
+  runner** (owned hardware), not GitHub-hosted compute.
 - **Signed commits** — SSH commit signing (`gpg.format = ssh`); the credential helper uses
   `!gh auth git-credential` so it resolves `gh` from `PATH` on any platform.
 
