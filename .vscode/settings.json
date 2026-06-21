@@ -344,7 +344,7 @@
   "markdown-preview-enhanced.previewMode": "Previews Only",
   "markdown-preview-enhanced.previewColorScheme": "editorColorScheme",
   "workbench.agentsWindowButton.enabled": false,
-  "python.languageServer": "Default",
+  "python.languageServer": "None",
   "securecoder.enabled": true,
   "google.cloud.region": "africa-south1",
   "google.cloud.billingQuotaProject": "healthy-life-467401-c1",
